@@ -17,6 +17,7 @@ package com.example.android.quakereport;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -29,12 +30,14 @@ import android.widget.ListView;
 import com.example.android.quakereport.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class EarthquakeActivity extends AppCompatActivity {
 
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
     public String URL;
-
+    public static final String REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
+    private EarthquakeAdapter mAdapter;
 
 
     @Override
@@ -42,19 +45,20 @@ public class EarthquakeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-        // Create a fake list of earthquakes.
-        ArrayList<Earthquake> earthquakes = com.example.android.quakereport.QueryUtils.extractEarthquakes();
+        // Create a list of earthquakes.
+        EarthquakeAsyncTask task = new EarthquakeAsyncTask();
+        task.execute(REQUEST_URL);
 
 
         // Find a reference to the {@link ListView} in the layout
         final ListView earthquakeListView = (ListView) findViewById(R.id.list);
 
         // Create a new {@link ArrayAdapter} of earthquakes
-        EarthquakeAdapter adapter = new EarthquakeAdapter(this, earthquakes);
+        mAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
-        earthquakeListView.setAdapter(adapter);
+        earthquakeListView.setAdapter(mAdapter);
 
 
         //Set click lsitener for list items
@@ -75,5 +79,28 @@ public class EarthquakeActivity extends AppCompatActivity {
     }
 
 
+    public void updateUi(List<Earthquake> eq) {
 
+    }
+
+    private class EarthquakeAsyncTask extends AsyncTask<String,Void, List<Earthquake>> {
+
+        @Override
+        protected List<Earthquake> doInBackground(String... urls) {
+            if(urls == null || urls.length < 0)
+                return null;
+            List<Earthquake> earthquakes = QueryUtils.fetchEarthquakeData(urls[0]);
+            return earthquakes;
+        }
+
+        @Override
+        protected void onPostExecute(List<Earthquake> earthquakes) {
+            //Clear adapter from previous data
+            mAdapter.clear();
+
+            // If no result, do nothing
+            if(earthquakes != null && !earthquakes.isEmpty())
+                mAdapter.addAll(earthquakes);
+        }
+    }
 }
