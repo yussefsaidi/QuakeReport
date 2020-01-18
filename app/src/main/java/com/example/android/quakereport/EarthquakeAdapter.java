@@ -1,6 +1,7 @@
 package com.example.android.quakereport;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
+import java.util.List;
 public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
     private Context mContext = null;
@@ -77,7 +78,7 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
     }
 
 
-    public EarthquakeAdapter(Activity context, ArrayList<Earthquake> EqList) {
+    public EarthquakeAdapter(Context context, List<Earthquake> EqList) {
         super(context, 0, EqList);
         mContext = context;
     }

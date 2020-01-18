@@ -20,6 +20,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.View;
@@ -36,8 +38,8 @@ public class EarthquakeActivity extends AppCompatActivity {
 
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
     public String URL;
-    public static final String REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
     private EarthquakeAdapter mAdapter;
+    JsonViewModel jsonViewModel;
 
 
     @Override
@@ -45,21 +47,27 @@ public class EarthquakeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-        // Create a list of earthquakes.
-        EarthquakeAsyncTask task = new EarthquakeAsyncTask();
-        task.execute(REQUEST_URL);
-
-
+        //Get Viewmodel instance
+        jsonViewModel = new ViewModelProvider(this).get(JsonViewModel.class);
         // Find a reference to the {@link ListView} in the layout
         final ListView earthquakeListView = (ListView) findViewById(R.id.list);
 
-        // Create a new {@link ArrayAdapter} of earthquakes
-        mAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
-
-        // Set the adapter on the {@link ListView}
-        // so the list can be populated in the user interface
-        earthquakeListView.setAdapter(mAdapter);
-
+        /**
+         * ViewModel to update UI when data changes
+         */
+        jsonViewModel.getData().observe(this, new Observer<List<Earthquake>>() {
+            @Override
+            public void onChanged(List<Earthquake> earthquakes) {
+                Log.d("MainActivity", "Tracing mainActivity observe method");
+                if(earthquakes != null){
+                    mAdapter = new EarthquakeAdapter(getApplicationContext(), earthquakes);
+                    // Set the adapter on the {@link ListView}
+                    // so the list can be populated in the user interface
+                    earthquakeListView.setAdapter(mAdapter);
+                }
+                mAdapter.notifyDataSetChanged();
+            }
+        });
 
         //Set click lsitener for list items
         earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -74,33 +82,6 @@ public class EarthquakeActivity extends AppCompatActivity {
                 intent.setData(Uri.parse(URL));
                 startActivity(intent);
             }
-
         });
-    }
-
-
-    public void updateUi(List<Earthquake> eq) {
-
-    }
-
-    private class EarthquakeAsyncTask extends AsyncTask<String,Void, List<Earthquake>> {
-
-        @Override
-        protected List<Earthquake> doInBackground(String... urls) {
-            if(urls == null || urls.length < 0)
-                return null;
-            List<Earthquake> earthquakes = QueryUtils.fetchEarthquakeData(urls[0]);
-            return earthquakes;
-        }
-
-        @Override
-        protected void onPostExecute(List<Earthquake> earthquakes) {
-            //Clear adapter from previous data
-            mAdapter.clear();
-
-            // If no result, do nothing
-            if(earthquakes != null && !earthquakes.isEmpty())
-                mAdapter.addAll(earthquakes);
-        }
     }
 }
