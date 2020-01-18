@@ -17,4 +17,5 @@
     <string name="app_name">Quake Report</string>
     <string name="near_the">Near the</string>
     <string name="of">of</string>
+    <string name="emptyList">No earthquakes found.</string>
 </resources>

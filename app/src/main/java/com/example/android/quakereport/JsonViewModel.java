@@ -47,7 +47,7 @@ public class JsonViewModel extends AndroidViewModel {
             // If no result, do nothing
             if(earthquakes != null && !earthquakes.isEmpty())
                 //mAdapter.addAll(earthquakes);
-                data.postValue(earthquakes);
-        }
+               data.postValue(earthquakes);
+             }
     }
 }

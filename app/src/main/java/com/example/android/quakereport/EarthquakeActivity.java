@@ -51,6 +51,7 @@ public class EarthquakeActivity extends AppCompatActivity {
         jsonViewModel = new ViewModelProvider(this).get(JsonViewModel.class);
         // Find a reference to the {@link ListView} in the layout
         final ListView earthquakeListView = (ListView) findViewById(R.id.list);
+        earthquakeListView.setEmptyView(findViewById(R.id.empty));
 
         /**
          * ViewModel to update UI when data changes
