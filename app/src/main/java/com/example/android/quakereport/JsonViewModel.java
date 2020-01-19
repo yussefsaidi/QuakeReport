@@ -30,25 +30,32 @@ public class JsonViewModel extends AndroidViewModel {
 
     public JsonViewModel(@NonNull Application application) {
         super(application);
-        loadData();
+        progress.setValue(0); //Progress bar is now visible
     }
 
     public LiveData<List<Earthquake>> getData(){
         return data;
     }
 
-    private void loadData(){
-
+    public void loadData(){
         // Create a list of earthquakes.
-        EarthquakeAsyncTask task = new EarthquakeAsyncTask();
-        task.execute(REQUEST_URL);
+        if(NetworkUtils.isConnected(getApplication())){
+            EarthquakeAsyncTask task = new EarthquakeAsyncTask();
+            task.execute(REQUEST_URL);
+        }
+        else {
+            progress.setValue(8);
+            contentString.set(R.string.networkError);
+        }
+
+
     }
 
     private class EarthquakeAsyncTask extends AsyncTask<String,Void, List<Earthquake>> {
 
         @Override
         protected void onPreExecute() {
-            progress.setValue(0); //Progress bar is now visible
+
         }
 
         @Override

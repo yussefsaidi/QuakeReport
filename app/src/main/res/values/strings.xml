@@ -19,5 +19,6 @@
     <string name="of">of</string>
     <string name="emptyList">No earthquakes found.</string>
     <string name="emptyListFirst"></string>
+    <string name="networkError">No connection.</string>
 
 </resources>

@@ -16,6 +16,7 @@
 package com.example.android.quakereport;
 
 import android.content.Intent;
+import android.net.Network;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -59,6 +60,7 @@ public class EarthquakeActivity extends AppCompatActivity {
         // Find a reference to the {@link ListView} in the layout
         final ListView earthquakeListView = (ListView) findViewById(R.id.list);
         earthquakeListView.setEmptyView(findViewById(R.id.empty));
+        jsonViewModel.loadData();
 
         /**
          * ViewModel to update UI when data changes
