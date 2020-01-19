@@ -18,4 +18,6 @@
     <string name="near_the">Near the</string>
     <string name="of">of</string>
     <string name="emptyList">No earthquakes found.</string>
+    <string name="emptyListFirst"></string>
+
 </resources>

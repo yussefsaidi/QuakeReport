@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -30,6 +31,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.android.quakereport.R;
+import com.example.android.quakereport.databinding.EarthquakeActivityBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +48,14 @@ public class EarthquakeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
-
+        final EarthquakeActivityBinding binding = DataBindingUtil.setContentView(this, R.layout.earthquake_activity);
         //Get Viewmodel instance
         jsonViewModel = new ViewModelProvider(this).get(JsonViewModel.class);
+        // LiveData should call setValue() to update UI via binding
+        binding.setViewModel(jsonViewModel);
+        // Required to update UI with LiveData
+        binding.setLifecycleOwner(this);
+
         // Find a reference to the {@link ListView} in the layout
         final ListView earthquakeListView = (ListView) findViewById(R.id.list);
         earthquakeListView.setEmptyView(findViewById(R.id.empty));
